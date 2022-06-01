@@ -1,0 +1,201 @@
+/* navigation design */
+#nav{
+    /* border: 3px solid green; */
+    height: 50px;
+    padding-top:10px ;
+    background-color: springgreen;
+    display: block;
+}
+#header{
+    display: inline-block;
+    margin-left: 850px;
+}
+
+
+
+/* search button*/
+#btn{
+    border-radius:30px;
+    border: none;
+    width: 95px;
+    height: 25px;
+    background-color:tomato;
+    align-items: center;
+    font-size: 18px;
+    cursor: pointer;
+    display: inline-block;
+}
+#btn:hover{background-color: rgb(165, 192, 214);}
+
+
+
+/* search box*/
+#input{
+    border-radius:30px;
+    border: none;
+    width: 210px;
+    height: 25px;
+    background-color: rgb(221, 239, 243);
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+#input:hover{
+    background-color: rgba(7, 206, 241, 0.884); 
+}
+
+
+
+/* switch mode design*/
+#swichmode{
+    display: inline-block;
+    margin-left: 10px;
+}
+#label{
+    background-color: black;
+    border: 2px saddlebrown;
+    width: 60px;
+    height: 27px;
+    display: inline-block;
+    margin-left:10px ;
+    border-radius:30px;
+    border: none;
+    position: relative;
+}
+#ball{
+    border-radius: 50%;
+    background-color: #fff;
+    height: 23px;
+    width: 30px;
+    margin-left: 2px;
+    margin-top: 2px;
+    position: absolute;
+    transition: 0.1s linear;
+}
+#switchcheck{
+    opacity: 0;
+    position: absolute;
+}
+#switchcheck:checked + #label #ball{
+ transform: translateX(26px)
+}
+
+
+
+/* content area design start from here*/
+#container{
+    /* border: 3px solid yellow; */
+    margin-top: 28px;
+}
+
+
+
+/*map box design*/
+#map{
+    width: 67vw;
+    height: 100vh;
+    /* border: 3px solid red; */
+    display: inline-block;
+    margin-top: -20px;
+}
+
+
+
+/* side content*/
+#content{
+    /* border:3px solid; */
+    float: right;
+    height: 100vh;
+    width: 30vw;
+    display: block;
+    margin-top: -20px;
+ 
+}
+
+span{
+font-size: 23px;
+display: inline-block;
+}
+
+
+
+/* side content image*/
+#asideimage{
+    /* border: 3px solid palevioletred; */
+    height: 25%;
+    }
+#img{
+    align-items: center;
+    justify-content: center;
+    position: static;
+    margin-top: 60px;
+    margin-left: 160px;
+}
+
+
+
+/*side content infromation*/
+#asidecontent{
+    border: 0.5px solid salmon;
+    height: 75%;
+    margin-top: 10px;
+    display: block;
+}
+#span1{
+    margin-left: 20px;
+}
+#span2{
+    margin-left: 20px;
+    margin-right: 3px;
+}
+ #span3{
+    margin-left: 20px;
+}  
+#span4{
+    margin-left: 20px;
+} 
+#span5{
+    margin-left: 20px;
+    
+}
+#span6{
+    margin-left: 20px;
+} 
+#span7{
+    margin-left: 15px;
+} 
+#span8{
+    margin-left: 15px;
+} 
+#span9{
+    margin-left: 15px;
+} 
+#span10{
+    margin-left: 15px;
+} 
+.asidecontent1{
+    margin-top: 30px;
+}
+.asidecontent2{
+    margin-top: 30px;
+}
+#checkdiv{
+    display: flexbox;
+    flex-direction: row;
+    margin-top: -20px;
+}
+
+
+
+/*checkbox to show and hide message for changing unit*/
+#checkbox{
+    display: inline-block;
+    height: 15px;
+    float: right;
+    cursor: pointer; 
+}
+#check{
+    height: 10px;
+    font-size: 17px;
+}
+
