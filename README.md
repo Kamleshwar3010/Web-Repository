@@ -2,7 +2,7 @@
 
 A responsive, feature-rich weather application built with HTML, CSS, and JavaScript. This project provides real-time weather updates, air quality information, and interactive maps.
 
-![Weather App Preview](https://via.placeholder.com/800x400?text=Weather+App+Preview)
+
 
 ## Features
 
