@@ -1,235 +1,157 @@
-let btn = document.getElementById("btn");
-let content= document.getElementById("content");
-let checkbox=document.getElementById("checkbox")
-let span1=document.getElementById("span1")
-let span2=document.getElementById("span2")
-let span3=document.getElementById("span3")
-let span4=document.getElementById("span4")
-let span5=document.getElementById("span5")
-let span6=document.getElementById("span6")
-let span7=document.getElementById("span7")
-let span8=document.getElementById("span8")
-let span9=document.getElementById("span9")
-let span10=document.getElementById("span10")
-let input=document.getElementById("input")
-let check=document.getElementById("check")
-let asidecontent=document.getElementById("asidecontent")
-let switchcheck=document.getElementById("switchcheck")
-let label=document.getElementById("label")
-let ball=document.getElementById("ball")
-let img=document.getElementById("img")
+const btn = document.getElementById("btn");
+const input = document.getElementById("input");
+const switchcheck = document.getElementById("switchcheck");
+const unitToggle = document.getElementById("unit-toggle-checkbox");
 
-//hide contente intially
-content.style.display="none";
+// Weather Data Elements
+const cityName = document.getElementById("city-name");
+const regionCountry = document.getElementById("region-country");
+const temperature = document.getElementById("temperature");
+const weatherCondition = document.getElementById("weather-condition");
+const weatherIcon = document.getElementById("weather-icon");
+const windSpeed = document.getElementById("wind-speed");
+const humidity = document.getElementById("humidity");
+const cloud = document.getElementById("cloud");
+const aqi = document.getElementById("aqi");
+const uvIndex = document.getElementById("uv-index");
 
+let currentData = null;
 
-
-
-//geting data from api
-    function getData(){
-        let url = `http://api.weatherapi.com/v1/current.json?key=45605ed6b2ea43ee88363631222705&q=${input.value}&aqi=yes`;
-        fetch(url).then((respon)=>{
-        return respon.json()
-    }).then((data)=>{
-       const result= JSON.stringify(data)
-       displaydata(data);
-       const marker1 = new mapboxgl.Marker()
-   .setLngLat([data.location.lon,data.location.lat])
-   .addTo(map)
-   const start=[data.location.lon,data.location.lat]
-   const end=[data.location.lon,data.location.lat]
-   let isAtstart=true;
-   const target=isAtstart?end:start;
-   isAtstart=!isAtstart;
-   map.flyTo({
-       center:target,
-       zoom:9,
-       bearing:0,
-       speed:0.5,
-       curve:1,
-       essential:true
-   })
-    })
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    // Set initial theme based on system preference or default to light
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        switchcheck.checked = true;
+        document.documentElement.setAttribute('data-theme', 'dark');
     }
 
-
-
-    //displaying data function
-    function displaydata(data){
-        let obj={
-         name:data.location.name,
-         country:data.location.country,
-         region:data.location.region,
-         tempc:data.current.temp_c,
-         weather:data.current.condition.text,
-         windk:data.current.wind_kph,
-        tempf:data.current.temp_f,
-        windm:data.current.wind_mph,
-        icon: data.current.condition.icon,
-        aqi:data.current.air_quality.pm2_5,
-        humidity:data.current.humidity,
-        cloud:data.current.cloud,
-        UV:data.current.uv
-        }
-         siunit(obj)
-        span1.innerText="City: "+obj.name;
-        span2.innerText="Region: "+obj.region;
-        span3.innerText="Country: "+obj.country;
-        span5.innerText="Weather: "+obj.weather;
-        span6.innerText="Cloud: "+obj.cloud+"%";
-        span9.innerText="Humidity: "+obj.humidity+"%";
-  
-    
-
-
-
-      //event for changing unit
-       checkbox.addEventListener('change',function toggleunit(){
-        if(checkbox.checked){
-            nonsiunit(obj)
-        }
-         else{
-             siunit(obj)
-         }
-    })
-   img.innerHTML= `<img src="${obj.icon}"/>`
-    }
-    
-
-
-//function to show non SI unit
-function nonsiunit(obj){
-checkbox.checked=true;
-span4.innerText="Tempreture: "+obj.tempf+"°f";
-span7.innerText="Wind Speed: "+obj.windm+"mph";
-span8.innerText="Air Quality: "+obj.aqi
-span10.innerText="UV: "+obj.UV
-}
-
-
-
-//function to show SI unit
-function siunit(obj){
-    checkbox.checked=false;
-    span4.innerText="Tempreture: "+obj.tempc+"°C";
-    span7.innerText="Wind Speed: "+obj.windk+"kph";
-    if (obj.aqi<=12.0) {
-        span8.innerText="Air Quality: Good";
-    }
-    else if (obj.aqi>=12.1 && obj.aqi<=35.4) {
-        span8.innerText="Air Quality: Moderate";
-    }
-    else if (obj.aqi>=35.5 && obj.aqi<=55.4) {
-        span8.innerText="Air Quality: Unhealty for sensitive screen";
-    }
-    else if (obj.aqi>=55.5 && obj.aqi<=150.4) {
-        span8.innerText="Air Quality: Unhealty";
-    }
-    else if (obj.aqi>=150.5 && obj.aqi<=250.4) {
-        span8.innerText="Air Quality: Very Unhealty";
-    }
-    else if (obj.aqi>=250.5) {
-        span8.innerText="Air Quality: Hazardous";
-    }
-    if(obj.UV<=2){
-        span10.innerText="UV: Low"
-    }
-    else if(obj.UV>2 && obj.UV <=5){
-        span10.innerText="UV: Moderate"
-    }
-    else if(obj.UV>5 && obj.UV <=7){
-        span10.innerText="UV: High"
-    }
-    else if(obj.UV>7 && obj.UV <=10){
-        span10.innerText="UV: Very High"
-    }
-    else if(obj.UV>=11){
-        span10.innerText="UV: Extreme"
-    }
-}
-
-
-
-
-
-//on click display data on screen
-btn.addEventListener('click',()=>{
-   getData()
-   content.style.display="block"
-   input.value="";
-   
+    // Default search
+    input.value = "London";
+    getData();
 });
 
+// Fetch Data
+function getData() {
+    const city = input.value;
+    if (!city) return;
 
+    const url = `http://api.weatherapi.com/v1/current.json?key=45605ed6b2ea43ee88363631222705&q=${city}&aqi=yes`;
 
-
-//on hover show message to change unit
-checkbox.addEventListener('mouseover',()=>{
-    check.style.display="inline-block"
-    if(checkbox.checked){
-        check.innerText="Check To See given information in SI unit";
-    }
-    else{
-        check.innerText="Check To See given information in non SI unit";
-    }
-})
-
-
-
-//on leave hide message to change unit
-checkbox.addEventListener('mouseleave',()=>{
-    check.style.display="none"
-})
-
-
-
-// function for switching mode automatically
-function screenmode(){
-    let date=new Date();
-    let hour=date.getHours();
-    if(hour>=7 && hour<=20){
-        whitemode()
-    } 
-    else{
-        darkmode()
-    }
-}
-screenmode();
-
-
-
-//function for switching mode manually
-switchcheck.addEventListener('change',function switchmode(){
-    if(switchcheck.checked){
-         darkmode()
-        }
-        else{
-           whitemode() 
-    }
-  })
-
-
-
-  // function for night mode
-function darkmode(){
-    switchcheck.checked=true;
-    document.body.style.backgroundColor='#292c35';
-    document.body.style.Color='#fff';
-    asidecontent.style.color='#fff'; 
-    check.style.color='#fff'; 
-    label.style.backgroundColor="#fff"
-    ball.style.backgroundColor="black"
+    fetch(url)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('City not found');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            currentData = data;
+            displayData(data);
+            updateMap(data.location.lat, data.location.lon);
+            input.value = "";
+        })
+        .catch((error) => {
+            console.error("Error fetching data:", error);
+            alert("City not found or API error.");
+        });
 }
 
+// Display Data
+function displayData(data) {
+    const { location, current } = data;
 
+    cityName.innerText = location.name;
+    regionCountry.innerText = `${location.region}, ${location.country}`;
 
-//function for daymode
-function whitemode(){
-    switchcheck.checked=false;
-    document.body.style.backgroundColor='#fff'
-    document.body.style.Color='black'
-    asidecontent.style.color='black';
-    check.style.color='black';
-    label.style.backgroundColor="black"
-    ball.style.backgroundColor="#fff" 
+    updateTemperature();
+
+    weatherCondition.innerText = current.condition.text;
+    weatherIcon.innerHTML = `<img src="${current.condition.icon}" alt="${current.condition.text}">`;
+
+    humidity.innerText = `${current.humidity}%`;
+    cloud.innerText = `${current.cloud}%`;
+
+    updateWindSpeed();
+
+    // AQI
+    const pm2_5 = current.air_quality.pm2_5;
+    aqi.innerText = getAqiDescription(pm2_5);
+
+    // UV
+    uvIndex.innerText = getUvDescription(current.uv);
 }
+
+function updateTemperature() {
+    if (!currentData) return;
+    if (unitToggle.checked) {
+        temperature.innerText = currentData.current.temp_f;
+    } else {
+        temperature.innerText = currentData.current.temp_c;
+    }
+}
+
+function updateWindSpeed() {
+    if (!currentData) return;
+    if (unitToggle.checked) {
+        windSpeed.innerText = `${currentData.current.wind_mph} mph`;
+    } else {
+        windSpeed.innerText = `${currentData.current.wind_kph} kph`;
+    }
+}
+
+function getAqiDescription(pm2_5) {
+    if (pm2_5 <= 12.0) return "Good";
+    if (pm2_5 <= 35.4) return "Moderate";
+    if (pm2_5 <= 55.4) return "Unhealthy for Sensitive Groups";
+    if (pm2_5 <= 150.4) return "Unhealthy";
+    if (pm2_5 <= 250.4) return "Very Unhealthy";
+    return "Hazardous";
+}
+
+function getUvDescription(uv) {
+    if (uv <= 2) return "Low";
+    if (uv <= 5) return "Moderate";
+    if (uv <= 7) return "High";
+    if (uv <= 10) return "Very High";
+    return "Extreme";
+}
+
+// Map Update
+function updateMap(lat, lon) {
+    if (typeof map !== 'undefined') {
+        map.flyTo({
+            center: [lon, lat],
+            zoom: 10,
+            essential: true
+        });
+
+        // Remove existing markers (optional, but good practice)
+        // Note: mapboxgl markers are added to the DOM, simplistic removal might be needed if many markers accumulate
+        new mapboxgl.Marker()
+            .setLngLat([lon, lat])
+            .addTo(map);
+    }
+}
+
+// Event Listeners
+btn.addEventListener('click', getData);
+
+input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        getData();
+    }
+});
+
+unitToggle.addEventListener('change', () => {
+    updateTemperature();
+    updateWindSpeed();
+});
+
+switchcheck.addEventListener('change', () => {
+    if (switchcheck.checked) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+});
+
